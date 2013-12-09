@@ -25,6 +25,7 @@
 #pragma once
 
 #ifdef TARGET_OS_MAC
+#if !defined(TARGET_OS_IPHONE)
 #define GL_DO_NOT_WARN_IF_MULTI_GL_VERSION_HEADERS_INCLUDED
 #import <OpenGL/gl3.h>
 #elif defined(TARGET_OS_IPHONE)
@@ -33,9 +34,10 @@
 #else
 #error This file is only meant for OS X or iOS.
 #endif
-
+#endif
 
 #ifdef TARGET_OS_MAC
+#if !defined(TARGET_OS_IPHONE)
 #define glGenVertexArraysMJ glGenVertexArrays
 #define glBindVertexArrayMJ glBindVertexArray
 #define glBindVertexArrayMJ glBindVertexArray
@@ -47,4 +49,5 @@
 #define glDeleteVertexArraysMJ glDeleteVertexArraysOES
 #else
 #error This file can only be compiled for OS X or iOS.
+#endif
 #endif
