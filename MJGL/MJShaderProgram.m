@@ -24,7 +24,7 @@
 
 #import "MJShaderProgram.h"
 
-const NSString *MJShaderProgramErrorDomain = @"MJShaderProgramErrorDomain";
+NSString * const MJShaderProgramErrorDomain = @"MJShaderProgramErrorDomain";
 
 @interface MJShaderProgram ()
 
