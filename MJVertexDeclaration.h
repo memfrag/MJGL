@@ -49,21 +49,29 @@
  * Add a floating point component. The component may consist of one
  * or more floats. For example, the position vector component in 3D space
  * would consist of three floats.
+ *
+ * @param The number of floats in the component.
  */
 - (void)addFloatComponentOfCount:(GLint)count;
 
 /**
  * Add an unsigned byte component, usually an RGB(A) color.
+ *
+ * @param The number of unsigned bytes in the component.
  */
 - (void)addUnsignedByteComponentOfCount:(GLint)count;
 
 /**
  * Add a normalized unsigned byte component.
+ *
+ * @param The number of normalized unsigned bytes in the component.
  */
 - (void)addNormalizedUnsignedByteComponentOfCount:(GLint)count;
 
 /**
  * Add a normalized unsigned short component.
+ *
+ * @param The number of normalized unsigned shorts in the component.
  */
 - (void)addNormalizedUnsignedShortComponentOfCount:(GLint)count;
 
