@@ -116,7 +116,7 @@ static CVReturn MJDisplayLinkCallback(CVDisplayLinkRef displayLink,
         
         double elapsedSeconds = now.tv_sec - _previousTime.tv_sec;
         double elapsedMicroSeconds = now.tv_usec - _previousTime.tv_usec;
-        double elapsedTime = elapsedSeconds + elapsedMicroSeconds * 0.000001;
+        NSTimeInterval elapsedTime = elapsedSeconds + elapsedMicroSeconds * 0.000001;
         
         // Set some thresholds to get reasonable values no matter what.
         if (elapsedTime < (1.0 / 512.0)) {
@@ -140,7 +140,7 @@ static CVReturn MJDisplayLinkCallback(CVDisplayLinkRef displayLink,
 - (void)tick:(CADisplayLink *)displayLink
 {
     @autoreleasepool {
-        double elapsedTime = displayLink.duration;
+        NSTimeInterval elapsedTime = displayLink.duration;
         if (self.delegate && [self.delegate respondsToSelector:@selector(frameTicker:nextFrameWithElapsedTime:)]) {
             [self.delegate frameTicker:self nextFrameWithElapsedTime:elapsedTime];
         }

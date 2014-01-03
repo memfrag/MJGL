@@ -51,7 +51,7 @@
 
 @protocol MJFrameTickerDelegate <NSObject>
 
-- (void)frameTicker:(MJFrameTicker *)frameTicker nextFrameWithElapsedTime:(double)elapsedTime;
+- (void)frameTicker:(MJFrameTicker *)frameTicker nextFrameWithElapsedTime:(NSTimeInterval)elapsedTime;
 
 @end
 
