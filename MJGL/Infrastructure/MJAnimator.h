@@ -26,6 +26,11 @@
 
 typedef uint32_t MJAnimationId;
 
+double (^MJAnimationCurveLinear)(double t);
+double (^MJAnimationCurveEaseIn)(double t);
+double (^MJAnimationCurveEaseOut)(double t);
+double (^MJAnimationCurveEaseInOut)(double t);
+
 
 @protocol MJAnimator <NSObject>
 

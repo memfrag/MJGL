@@ -24,6 +24,23 @@
 
 #import "MJAnimator.h"
 
+double (^MJAnimationCurveLinear)(double t) = ^(double t) {
+    return t;
+};
+
+double (^MJAnimationCurveEaseIn)(double t) = ^(double t) {
+    return t * t;
+};
+
+double (^MJAnimationCurveEaseOut)(double t) = ^(double t) {
+    return -t * (t - 2);
+};
+
+double (^MJAnimationCurveEaseInOut)(double t) = ^(double t) {
+    return 0.5 * (1 - cos(M_PI * t));
+};
+
+
 @interface MJAnimationInstance : NSObject
 
 @property (nonatomic, assign) NSTimeInterval duration;
