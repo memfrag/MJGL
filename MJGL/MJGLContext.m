@@ -40,19 +40,16 @@
 {
     self = [super init];
     if (self) {
-#ifdef TARGET_OS_IPHONE
+#if TARGET_OS_IPHONE
         _glContext = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES2];
 #endif
     }
     return self;
 }
 
-#ifndef TARGET_OS_IPHONE
-#endif
-
 - (void)makeCurrent
 {
-#ifdef TARGET_OS_IPHONE
+#if TARGET_OS_IPHONE
     [EAGLContext setCurrentContext:self.glContext];
 #else
     [self.glContext makeCurrent];

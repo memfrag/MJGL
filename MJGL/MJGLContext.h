@@ -36,7 +36,7 @@
 /** Default implementation of the MJGLContext protocol. */
 @interface MJGLContext : NSObject <MJGLContext>
 
-#ifndef TARGET_OS_IPHONE
+#if !TARGET_OS_IPHONE
 /**
  * On OS X, it's easier to just get the context from the NSOpenGLView,
  * but if you still want to use this class, insert the context in the init.
