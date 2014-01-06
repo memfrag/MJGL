@@ -24,17 +24,9 @@
 
 #import "MJGLContext.h"
 
-@interface MJGLContext ()
-
-#ifdef TARGET_OS_IPHONE
-@property (nonatomic, strong) EAGLContext *glContext;
-#else
-@property (nonatomic, strong) NSOpenGLContext *glContext;
-#endif
-
-@end
-
 @implementation MJGLContext
+
+@synthesize glContext = _glContext;
 
 - (id)init
 {
@@ -47,12 +39,23 @@
     return self;
 }
 
+#if !TARGET_OS_IPHONE
+- (id)initWithContext:(NSOpenGLContext *)glContext
+{
+    self = [super init];
+    if (self) {
+        _glContext = glContext;
+    }
+    return self;
+}
+#endif
+
 - (void)makeCurrent
 {
 #if TARGET_OS_IPHONE
     [EAGLContext setCurrentContext:self.glContext];
 #else
-    [self.glContext makeCurrent];
+    [self.glContext makeCurrentContext];
 #endif
 }
 
