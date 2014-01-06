@@ -23,6 +23,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "MJGL.h"
 
 /** Write shaders with partial syntax coloring right in your code. */
 #define SHADER_STRING(x) @ #x
