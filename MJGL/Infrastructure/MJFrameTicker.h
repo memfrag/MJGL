@@ -42,8 +42,8 @@
 
 @interface MJFrameTicker : NSObject <MJFrameTicker>
 
-#if !defined(TARGET_OS_IPHONE)
-- (id)initWithView:(NSView *)view;
+#if !TARGET_OS_IPHONE
+- (id)initWithView:(NSOpenGLView *)view;
 #endif
 
 @end

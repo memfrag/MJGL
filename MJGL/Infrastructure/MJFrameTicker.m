@@ -24,18 +24,25 @@
 
 #import "MJFrameTicker.h"
 
-#if !defined(TARGET_OS_IPHONE)
+#if !TARGET_OS_IPHONE
 #import <CoreVideo/CoreVideo.h>
 #include <sys/time.h>
 #else
 #import <QuartzCore/QuartzCore.h>
 #endif
 
+@interface MJFrameTicker ()
+
+#if !TARGET_OS_IPHONE
+@property (nonatomic, assign) struct timeval previousTime;
+#endif
+
+@end
+
 @implementation MJFrameTicker {
-#if !defined(TARGET_OS_IPHONE)
-    __weak NSView *_view;
+#if !TARGET_OS_IPHONE
+    __weak NSOpenGLView *_view;
     CVDisplayLinkRef _displayLink;
-    struct timeval _previousTime;
 #else
     CADisplayLink *_displayLink;
 #endif
@@ -44,10 +51,14 @@
 
 @synthesize delegate;
 
-#if !defined(TARGET_OS_IPHONE)
-- (id)initWithView:(NSView *)view
+#if !TARGET_OS_IPHONE
+- (id)initWithView:(NSOpenGLView *)view
 {
-    
+    self = [super init];
+    if (self) {
+        _view = view;
+    }
+    return self;
 }
 #endif
 
@@ -59,7 +70,7 @@
 - (void)start
 {
 	if (!_running) {
-#if !defined(TARGET_OS_IPHONE)
+#if !TARGET_OS_IPHONE
         // Create a display link capable of being used with all active displays
         CVDisplayLinkCreateWithActiveCGDisplays(&_displayLink);
         
@@ -67,8 +78,8 @@
         CVDisplayLinkSetOutputCallback(_displayLink, &MJDisplayLinkCallback, (__bridge void *)(self));
         
         // Set the display link for the current renderer
-        CGLContextObj cglContext = [view.openGLContext CGLContextObj];
-        CGLPixelFormatObj cglPixelFormat = [view.pixelFormat CGLPixelFormatObj];
+        CGLContextObj cglContext = [_view.openGLContext CGLContextObj];
+        CGLPixelFormatObj cglPixelFormat = [_view.pixelFormat CGLPixelFormatObj];
         CVDisplayLinkSetCurrentCGDisplayFromOpenGLContext(_displayLink, cglContext, cglPixelFormat);
         
         gettimeofday(&_previousTime, NULL);
@@ -88,7 +99,7 @@
 - (void)stop
 {
     if (_running) {
-#if !defined(TARGET_OS_IPHONE)
+#if !TARGET_OS_IPHONE
         CVDisplayLinkStop(_displayLink);
         CVDisplayLinkRelease(_displayLink);
         _displayLink = nil;
@@ -101,7 +112,7 @@
 	}
 }
 
-#if !defined(TARGET_OS_IPHONE)
+#if !TARGET_OS_IPHONE
 // This is the renderer output callback function
 static CVReturn MJDisplayLinkCallback(CVDisplayLinkRef displayLink,
                                       const CVTimeStamp *now,
@@ -114,8 +125,10 @@ static CVReturn MJDisplayLinkCallback(CVDisplayLinkRef displayLink,
         struct timeval now;
         gettimeofday(&now, NULL);
         
-        double elapsedSeconds = now.tv_sec - _previousTime.tv_sec;
-        double elapsedMicroSeconds = now.tv_usec - _previousTime.tv_usec;
+        MJFrameTicker *frameTicker = (__bridge MJFrameTicker *)displayLinkContext;
+        
+        double elapsedSeconds = now.tv_sec - frameTicker.previousTime.tv_sec;
+        double elapsedMicroSeconds = now.tv_usec - frameTicker.previousTime.tv_usec;
         NSTimeInterval elapsedTime = elapsedSeconds + elapsedMicroSeconds * 0.000001;
         
         // Set some thresholds to get reasonable values no matter what.
@@ -125,14 +138,13 @@ static CVReturn MJDisplayLinkCallback(CVDisplayLinkRef displayLink,
             elapsedTime = 1 / 60.0;
         }
         
-        _previousTime = now;
-
-        MJFrameTicker *frameTicker = (__bridge MJFrameTicker *)displayLinkContext;
+        frameTicker.previousTime = now;
+        
         
         if (frameTicker.delegate && [frameTicker.delegate respondsToSelector:@selector(frameTicker:nextFrameWithElapsedTime:)]) {
             [frameTicker.delegate frameTicker:frameTicker nextFrameWithElapsedTime:elapsedTime];
         }
-
+        
         return kCVReturnSuccess;
     }
 }

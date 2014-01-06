@@ -28,6 +28,14 @@
 /** Protocol for OpenGL context wrapper. */
 @protocol MJGLContext <NSObject>
 
+#if TARGET_OS_IPHONE
+/** The iOS OpenGL context. */
+@property (nonatomic, strong) EAGLContext *glContext;
+#else
+/** The OS X OpenGL context. */
+@property (nonatomic, strong) NSOpenGLContext *glContext;
+#endif
+
 /** Make this context the current OpenGL context. */
 - (void)makeCurrent;
 
