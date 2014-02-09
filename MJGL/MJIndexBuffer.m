@@ -39,6 +39,7 @@
 	if (self)
 	{
 		_bufferId = GL_INVALID_VALUE;
+        _count = indexCount;
 		
 		glGenBuffers(1, &_bufferId);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _bufferId);

@@ -36,6 +36,9 @@
  */
 @interface MJIndexBuffer : NSObject
 
+/** The number of indices in the buffer. */
+@property (nonatomic, readonly) NSUInteger count;
+
 /**
  * Initialize the index buffer and copy index data to it.
  *
