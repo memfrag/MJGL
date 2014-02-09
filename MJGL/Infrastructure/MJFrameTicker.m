@@ -71,20 +71,12 @@
 {
 	if (!_running) {
 #if !TARGET_OS_IPHONE
-        // Create a display link capable of being used with all active displays
         CVDisplayLinkCreateWithActiveCGDisplays(&_displayLink);
-        
-        // Set the renderer output callback function
         CVDisplayLinkSetOutputCallback(_displayLink, &MJDisplayLinkCallback, (__bridge void *)(self));
-        
-        // Set the display link for the current renderer
         CGLContextObj cglContext = [_view.openGLContext CGLContextObj];
         CGLPixelFormatObj cglPixelFormat = [_view.pixelFormat CGLPixelFormatObj];
         CVDisplayLinkSetCurrentCGDisplayFromOpenGLContext(_displayLink, cglContext, cglPixelFormat);
-        
         gettimeofday(&_previousTime, NULL);
-        
-        // Activate the display link
         CVDisplayLinkStart(_displayLink);
 #else
 		_displayLink = [CADisplayLink displayLinkWithTarget:self selector:@selector(tick:)];
@@ -113,7 +105,6 @@
 }
 
 #if !TARGET_OS_IPHONE
-// This is the renderer output callback function
 static CVReturn MJDisplayLinkCallback(CVDisplayLinkRef displayLink,
                                       const CVTimeStamp *now,
                                       const CVTimeStamp *outputTime,
