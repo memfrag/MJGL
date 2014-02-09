@@ -26,31 +26,72 @@
 
 @protocol MJFrameTickerDelegate;
 
-
+/**
+ * The frame ticker calls a delegate method everytime a new frame
+ * is about to be rendered.
+ */
 @protocol MJFrameTicker <NSObject>
 
+/** The delegate of the frame ticker. */
 @property (nonatomic, weak) id<MJFrameTickerDelegate> delegate;
 
+/**
+ * Check if the frame ticker is running or if it has been stopped.
+ *
+ * @return YES if the frame ticker is running.
+ */
 - (BOOL)running;
 
+/**
+ * Start the frame ticker.
+ *
+ * On iOS, this would typically be used to start the frame ticker
+ * after the app has been activated.
+ */
 - (void)start;
 
+/**
+ * Stop the frame ticker.
+ *
+ * On iOS, this would typically be used to stop the frame ticker
+ * when the app is about to be deactivated.
+ */
 - (void)stop;
 
 @end
 
-
+/**
+ * Default implementation of the frame ticker protocol.
+ */
 @interface MJFrameTicker : NSObject <MJFrameTicker>
 
 #if !TARGET_OS_IPHONE
+/**
+ * Initialize the frame ticker with the OS X OpenGL view to track frames for.
+ *
+ * NOTE: OS X only!
+ *
+ * @param view OpenGL view to track frames for.
+ *
+ * @return Initialized frame ticker object.
+ */
 - (id)initWithView:(NSOpenGLView *)view;
 #endif
 
 @end
 
 
+/**
+ * Delegate protocol of the frame ticker.
+ */
 @protocol MJFrameTickerDelegate <NSObject>
 
+/**
+ * Called when the next frame is about to be rendered.
+ *
+ * @param frameTicker The frame ticker object that called the method.
+ * @param elapsedTime The time that has elapsed since the last frame.
+ */
 - (void)frameTicker:(MJFrameTicker *)frameTicker nextFrameWithElapsedTime:(NSTimeInterval)elapsedTime;
 
 @end

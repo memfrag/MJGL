@@ -25,14 +25,30 @@
 #import <Foundation/Foundation.h>
 #import <GLKit/GLKit.h>
 
+/**
+ * Super simple texture manager. Its only purpose is to cache loaded
+ * textures to avoid redundant loads of an already loaded texture.
+ */
 @protocol MJTextureManager <NSObject>
 
+/**
+ * Loads a texture from the main bundle or returns a cached
+ * texture if the texture has been loaded by this instance of the
+ * texture manager before.
+ */
 - (GLKTextureInfo *)loadTexture:(NSString *)textureName;
 
+/**
+ * Removes a texture from the cache. Note that the texture object will
+ * not be deallocated if other objects strongly refer to it.
+ */
 - (void)removeTextureWithName:(NSString *)textureName;
 
 @end
 
+/**
+ * Default implementation of the texture manager protocol.
+ */
 @interface MJTextureManager : NSObject <MJTextureManager>
 
 @end
