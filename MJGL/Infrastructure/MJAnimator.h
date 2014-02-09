@@ -84,6 +84,8 @@ double (^MJAnimationCurveEaseInOut)(double t);
 - (MJAnimationId)animateWithRepeatingDuration:(NSTimeInterval)duration
                                     animation:(void (^)(double t))animation;
 
+- (MJAnimationId)animateIndefinitelyWithAnimation:(BOOL (^)(double elapsedTime))animation;
+
 - (void)invalidateAnimationWithId:(MJAnimationId)animationId;
 
 - (void)updateWithElapsedTime:(NSTimeInterval)elapsedTime;

@@ -24,6 +24,8 @@
 
 #import "MJAnimator.h"
 
+static MJAnimationId currentAnimationId = 0;
+
 double (^MJAnimationCurveLinear)(double t) = ^(double t) {
     return t;
 };
@@ -40,15 +42,23 @@ double (^MJAnimationCurveEaseInOut)(double t) = ^(double t) {
     return 0.5 * (1 - cos(M_PI * t));
 };
 
+@protocol MJAnimationInstance <NSObject>
 
-@interface MJAnimationInstance : NSObject
+@property (nonatomic, assign) NSTimeInterval animationTime;
+@property (nonatomic, assign) BOOL markedForRemoval;
+@property (nonatomic, copy) void (^completion)();
+
+- (void)updateWithElapsedTime:(NSTimeInterval)elapsedTime;
+
+@end
+
+@interface MJAnimationInstance : NSObject <MJAnimationInstance>
 
 @property (nonatomic, assign) NSTimeInterval duration;
 @property (nonatomic, assign) NSTimeInterval delay;
 @property (nonatomic, assign) BOOL repeat;
 @property (nonatomic, copy) double (^curve)(double t);
 @property (nonatomic, copy) void (^animation)(double t);
-@property (nonatomic, copy) void (^completion)();
 
 @property (nonatomic, assign) NSTimeInterval oneOverDuration;
 @property (nonatomic, assign) NSTimeInterval remainingDelay;
@@ -67,6 +77,8 @@ double (^MJAnimationCurveEaseInOut)(double t) = ^(double t) {
 @end
 
 @implementation MJAnimationInstance
+
+@synthesize completion = _completion;
 
 - (id)initWithDuration:(NSTimeInterval)duration
                  delay:(NSTimeInterval)delay
@@ -109,9 +121,6 @@ double (^MJAnimationCurveEaseInOut)(double t) = ^(double t) {
             fmod(_animationTime, _duration);
         } else {
             _animation(_curve(1.0));
-            if (_completion) {
-                _completion();
-            }
             _markedForRemoval = YES;
             return;
         }
@@ -119,6 +128,42 @@ double (^MJAnimationCurveEaseInOut)(double t) = ^(double t) {
     
     double t = _animationTime * _oneOverDuration;
     _animation(_curve(t));
+}
+
+@end
+
+
+@interface MJIndefiniteAnimationInstance : NSObject <MJAnimationInstance>
+
+@property (nonatomic, copy) BOOL (^animation)(double elapsedTime);
+
+@property (nonatomic, assign) NSTimeInterval animationTime;
+@property (nonatomic, assign) BOOL markedForRemoval;
+
+- (id)initWithAnimation:(BOOL (^)(double t))animation;
+
+- (void)updateWithElapsedTime:(NSTimeInterval)elapsedTime;
+
+@end
+
+@implementation MJIndefiniteAnimationInstance
+
+@synthesize completion = _completion;
+
+- (id)initWithAnimation:(BOOL (^)(double elapsedTime))animation
+{
+    self = [super init];
+    if (self) {
+        _animation = animation;
+    }
+    return self;
+}
+
+- (void)updateWithElapsedTime:(NSTimeInterval)elapsedTime
+{
+    _animationTime += elapsedTime;
+    
+    _markedForRemoval = _animation(elapsedTime);
 }
 
 @end
@@ -168,7 +213,6 @@ double (^MJAnimationCurveEaseInOut)(double t) = ^(double t) {
                            animation:(void (^)(double t))animation
                           completion:(void (^)())completion
 {
-    static MJAnimationId currentAnimationId = 0;
     MJAnimationId animationId = ++currentAnimationId;
     
     MJAnimationInstance *animationInstance = [[MJAnimationInstance alloc] initWithDuration:duration
@@ -327,6 +371,17 @@ double (^MJAnimationCurveEaseInOut)(double t) = ^(double t) {
                           completion:nil];
 }
 
+- (MJAnimationId)animateIndefinitelyWithAnimation:(BOOL (^)(double elapsedTime))animation
+{
+    MJAnimationId animationId = ++currentAnimationId;
+    
+    MJIndefiniteAnimationInstance *animationInstance = [[MJIndefiniteAnimationInstance alloc] initWithAnimation:animation];
+    
+    self.animations[@(animationId)] = animationInstance;
+    
+    return animationId;
+}
+
 
 - (void)invalidateAnimationWithId:(MJAnimationId)animationId
 {
@@ -338,19 +393,27 @@ double (^MJAnimationCurveEaseInOut)(double t) = ^(double t) {
 
 - (void)updateWithElapsedTime:(NSTimeInterval)elapsedTime
 {
-    NSMutableArray *removals = [NSMutableArray array];
+    NSMutableDictionary *removals = [NSMutableDictionary dictionary];
     
     for (id animationId in self.animations) {
-        MJAnimationInstance *animation = self.animations[animationId];
+        id<MJAnimationInstance> animation = self.animations[animationId];
         if (animation.markedForRemoval) {
-            [removals addObject:animationId];
+            [removals setObject:animation forKey:animationId];
             continue;
         }
         
         [animation updateWithElapsedTime:elapsedTime];
         
         if (animation.markedForRemoval) {
-            [removals addObject:animationId];
+            [removals setObject:animation forKey:animationId];
+        }
+    }
+    
+    [self.animations removeObjectsForKeys:removals.allKeys];
+    for (id animationId in removals) {
+        id<MJAnimationInstance> animation = removals[animationId];
+        if (animation.completion) {
+            animation.completion();
         }
     }
 }
