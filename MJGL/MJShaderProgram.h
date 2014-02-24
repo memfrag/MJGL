@@ -26,7 +26,11 @@
 #import "MJGL.h"
 
 /** Write shaders with partial syntax coloring right in your code. */
+#if !TARGET_OS_IPHONE
+#define SHADER_STRING(x) @"#version 150\n" #x
+#else
 #define SHADER_STRING(x) @ #x
+#endif
 
 /** The shader program error domain string. */
 extern NSString * const MJShaderProgramErrorDomain;
