@@ -58,7 +58,11 @@ NSString * const MJShaderProgramErrorDomain = @"MJShaderProgramErrorDomain";
 }
 
 - (NSInteger)indexOfAttribute:(NSString *)attribute {
-    return [self.attributes indexOfObject:attribute];
+    NSInteger index = [self.attributes indexOfObject:attribute];
+    if (index == -1) {
+        NSLog(@"WARNING: Unable to bind shader attribute '%@'", attribute);
+    }
+    return index;
 }
 
 - (NSInteger)indexOfUniform:(NSString *)uniform {
