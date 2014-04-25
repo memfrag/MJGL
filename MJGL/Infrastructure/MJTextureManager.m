@@ -46,8 +46,9 @@
 
 - (void)removeTextureWithName:(NSString *)textureName {
     GLKTextureInfo *texture = _textures[textureName];
+    GLuint name = texture.name;
     if (texture) {
-        glDeleteTextures(1, &texture.name);
+        glDeleteTextures(1, &name);
         [_textures removeObjectForKey:textureName];
     }
 }
