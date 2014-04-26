@@ -118,7 +118,7 @@ double (^MJAnimationCurveEaseInOut)(double t) = ^(double t) {
     
     if (_animationTime >= _duration) {
         if (_repeat) {
-            fmod(_animationTime, _duration);
+            _animationTime = fmod(_animationTime, _duration);
         } else {
             _animation(_curve(1.0));
             _markedForRemoval = YES;
