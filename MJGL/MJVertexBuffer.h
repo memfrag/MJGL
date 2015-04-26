@@ -173,6 +173,13 @@ typedef enum MJVertexBufferUsagePattern
  * points to a vertex in the specified range of vertices, interpreted
  * according to the draw mode specified by the drawMode property.
  */
+- (void)drawWithIndexBuffer:(MJIndexBuffer *)indexBuffer;
+
+/**
+ * Draw the geometry indirectly defined by the index buffer where each index
+ * points to a vertex in the specified range of vertices, interpreted
+ * according to the draw mode specified by the drawMode property.
+ */
 - (void)drawWithFirstVertexAtIndex:(NSUInteger)firstIndex
                              count:(NSUInteger)vertexCount
                        indexBuffer:(MJIndexBuffer *)indexBuffer;
