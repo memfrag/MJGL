@@ -33,7 +33,7 @@
 }
 
 - (id)initWithCapacity:(unsigned int)indexCount
-               indices:(const GLshort *)indices
+               indices:(const GLushort *)indices
 {
     self = [super init];
 	if (self)
@@ -43,7 +43,7 @@
 		
 		glGenBuffers(1, &_bufferId);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _bufferId);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, indexCount * sizeof(GLshort),
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, indexCount * sizeof(GLushort),
                      indices, GL_STATIC_DRAW);
 	}
 	
