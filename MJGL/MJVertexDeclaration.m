@@ -72,19 +72,19 @@
         // Lazily instantiate components array
         self.components = [NSMutableArray array];
     }
-    
+
     MJVertexDeclarationComponent *component =
                                 [[MJVertexDeclarationComponent alloc] init];
-    component.index = self.components.count;
+    component.index = (GLuint) self.components.count;
 	component.size = count;
 	component.type = type;
 	component.normalized = normalized;
 	component.stride = 0;
 	component.offset = (const GLvoid *)_stride;
-	component.attribute = self.components.count;
-    
+	component.attribute = (GLuint) self.components.count;
+
     [self.components addObject:component];
-    
+
     switch (type)
     {
         case GL_FLOAT:
@@ -94,11 +94,11 @@
             _stride += count * sizeof(GLubyte);
             break;
     }
-    
+
     // Update stride
     for (MJVertexDeclarationComponent *component in self.components)
     {
-        component.stride = _stride;
+        component.stride = (GLsizei) _stride;
     }
 }
 
