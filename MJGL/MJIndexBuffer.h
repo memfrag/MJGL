@@ -47,7 +47,7 @@
  * @param indices Pointer to an array of indices.
  */
 - (id)initWithCapacity:(unsigned int)indexCount
-               indices:(const GLshort *)indices;
+               indices:(const GLushort *)indices;
 
 /**
  * Bind the index buffer to the OpenGL context as the current index buffer.
