@@ -112,6 +112,11 @@
     glBindVertexArrayMJ(0);
 }
 
+- (void)drawWithIndexBuffer:(MJIndexBuffer *)indexBuffer
+{
+    [self drawWithFirstVertexAtIndex:0 count:indexBuffer.count indexBuffer:indexBuffer];
+}
+
 - (void)drawWithFirstVertexAtIndex:(NSUInteger)firstIndex
                              count:(NSUInteger)vertexCount
                        indexBuffer:(MJIndexBuffer *)indexBuffer
